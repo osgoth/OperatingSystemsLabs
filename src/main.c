@@ -5,16 +5,28 @@
 
 #define t_qua 4
 #define qua 10
+#define rr "Round Robin"
+#define fcfs "First Come First Serve"
+#define sjf "Shortest Job First"
+#define srtf "Shortest Remaining Time First"
 
-// fcfs, sjf, srtf, rr
+int compare_incr(const void *a, const void *b)
+{
+    return (*(int *)a - *(int *)b);
+}
 
 void waiting_time(int *bt, int *wt, int *at, char *type)
 {
     wt[0] = 0;
-    if (strcmp(type, "srtf") == 0)
+    if (strcmp(type, srtf) == 0)
         waiting_time_srtf(bt, wt, at);
-    else if (strcmp(type, "rr") == 0)
+    else if (strcmp(type, rr) == 0)
         waiting_time_rr(bt, wt, at);
+    else if (strcmp(type, sjf) == 0)
+    {
+        qsort(bt, qua, sizeof(int), compare_incr);
+        waiting_time_sjf(bt, wt);
+    }
     else
         waiting_time_sjf(bt, wt);
 }
@@ -63,16 +75,16 @@ void waiting_time_srtf(int *bt, int *wt, int *at)
 
 void waiting_time_rr(int *bt, int *wt, int *at)
 {
-    int tempt[qua], done = 0, cur_t = 0, quant = 0, min = __INT_MAX__;
-
+    int tempt[qua], done = 0, cur_t = 0, min = __INT_MAX__;
+    float quant;
     for (int i = 0; i < qua; i++)
     {
         tempt[i] = bt[i];
         if (tempt[i] < min)
             min = tempt[i];
     }
-    quant = 2;
-    // quant = ceil(min / 2);
+
+    quant = min * 0.6;
 
     while (done != 1)
     {
@@ -128,85 +140,47 @@ void randomize_arr(int *arr, int uplim)
         arr[i] = rand() % (uplim * 2) + uplim;
 }
 
-int compare_incr(const void *a, const void *b)
+void copy(int *from, int *to)
 {
-    return (*(int *)a - *(int *)b);
-}
-
-void fcfs(int *bt, int *wt, int *at, int *avgs)
-{
-    char *type = "fcfs";
-
-    printf("First Come First Serve:\n");
-
-    waiting_time(bt, wt, at, type);
-
-    avgs[0] = print_avg(bt, wt, at, type);
-}
-
-void sjf(int *bt, int *wt, int *at, int *avgs)
-{
-    char *type = "sjf";
-
-    printf("Shortest Job First:\n");
-    qsort(bt, qua, sizeof(int), compare_incr); //sort
-
-    waiting_time(bt, wt, at, type);
-
-    avgs[1] = print_avg(bt, wt, at, type);
-}
-
-void srtf(int *bt, int *wt, int *at, int *avgs)
-{
-    char *type = "srtf";
-
-    printf("Shortest Remaining Time First:\n");
-
-    waiting_time(bt, wt, at, type);
-
-    avgs[2] = print_avg(bt, wt, at, type);
-}
-
-void rr(int *bt, int *wt, int *at, int *avgs)
-{
-    char *type = "rr";
-    printf("Round Robin:\n");
-
-    waiting_time(bt, wt, at, type);
-
-    avgs[3] = print_avg(bt, wt, at, type);
-}
-void copy(int *arr, int *other)
-{
-
     for (int i = 0; i < qua; i++)
-        other[i] = arr[i];
+        to[i] = from[i];
 }
+
 int main()
 {
     int bt[qua];                    //burst time array
-    int wt[qua];                    //waiting time array
     int at[qua];                    //arrival time array
+    int wt[qua];                    //waiting time array
     int avgs[t_qua] = {0, 0, 0, 0}; //average waiting time of all algorithms
+    char *types[] = {fcfs, sjf, srtf, rr};
     int min = __INT_MAX__;
+    int min_i = 0;
 
     randomize_arr(bt, 25); //randomize burst time
     randomize_arr(at, 25); //randomize arrival time
-    int tempbt_srtf[qua], tempbt_rr[qua];
-
-    copy(bt, tempbt_srtf);
-    copy(bt, tempbt_rr);
-
-    fcfs(bt, wt, at, avgs);
-    sjf(bt, wt, at, avgs);
-    srtf(tempbt_srtf, wt, at, avgs);
-    rr(tempbt_rr, wt, at, avgs);
 
     for (int i = 0; i < t_qua; i++)
-        if (avgs[i] < min)
-            min = avgs[i];
+    {
+        //create temp arrays
+        int tempbt[qua];
+        int tempat[qua];
+        //copy original values to temp array
+        copy(bt, tempbt);
+        copy(at, tempat);
 
-    printf("The least time taken: %d\n", min);
+        printf("%s:\n", types[i]);
+        waiting_time(bt, wt, at, types[i]);
+        avgs[i] = print_avg(bt, wt, at, types[i]);
+    }
+
+    //find minimum
+    for (int i = 0; i < t_qua; i++)
+        if (avgs[i] < min)
+        {
+            min = avgs[i];
+            min_i = i;
+        }
+    printf("Smallest waiting time = %d: %s\n\n", avgs[min_i], types[min_i]);
 
     return 0;
 }
