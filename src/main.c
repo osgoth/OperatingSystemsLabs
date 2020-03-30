@@ -15,34 +15,39 @@ int main()
     int wt[qua];                    //waiting time array
     int avgs[t_qua] = {0, 0, 0, 0}; //average waiting time of all algorithms
     char *types[] = {fcfs, sjf, srtf, rr};
-    int min = __INT_MAX__;
     int min_i = 0;
+    int min_tot = 0;
+    int sim_qua = 0;
 
-    randomize_arr(bt, 25); //randomize burst time
-    randomize_arr(at, 25); //randomize arrival time
-
-    for (int i = 0; i < t_qua; i++)
+    printf("How many simulations would you like to go through?\n>>> ");
+    scanf("%d", &sim_qua);
+    for (int j = 0; j < sim_qua; j++)
     {
-        //create temp arrays
-        int tempbt[qua];
-        int tempat[qua];
-        //copy original values to temp array
-        copy(bt, tempbt);
-        copy(at, tempat);
+        randomize_arr(bt, 25); //randomize burst time
+        randomize_arr(at, 25); //randomize arrival time
 
-        printf("%s:\n", types[i]);
-        waiting_time(bt, wt, at, types[i]);
-        avgs[i] = print_avg(bt, wt, at, types[i]);
-    }
-
-    //find minimum
-    for (int i = 0; i < t_qua; i++)
-        if (avgs[i] < min)
+        for (int i = 0; i < t_qua; i++)
         {
-            min = avgs[i];
-            min_i = i;
+            //create temp arrays
+            int tempbt[qua];
+            int tempat[qua];
+            //copy original values to temp array
+            copy(bt, tempbt);
+            copy(at, tempat);
+            waiting_time(bt, wt, at, types[i]);
+            avgs[i] += avg_wait(wt);
         }
-    printf("Smallest waiting time = %d: %s\n\n", avgs[min_i], types[min_i]);
+    }
+    for (int i = 0; i < t_qua; i++)
+        avgs[i] /= sim_qua;
+    for (int i = 0; i < t_qua; i++)
+        if (avgs[i] < avgs[min_i])
+            min_i = i;
+
+    for (int i = 0; i < t_qua; i++)
+        printf("Average waiting time = %d: %s\n", avgs[i], types[i]);
+
+    printf("Smallest = %d: %s\n", avgs[min_i], types[min_i]);
 
     return 0;
 }

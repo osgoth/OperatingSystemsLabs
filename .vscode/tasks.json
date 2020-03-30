@@ -8,7 +8,9 @@
         "command": "/usr/bin/gcc",
         "args": [
             "-g",
-            "${workspaceFolder}/src/${fileBasename}",
+            "${workspaceFolder}/src/main.c",
+            "${workspaceFolder}/src/misc.c",
+            "${workspaceFolder}/src/lab1.c",
             "-o",
             "${workspaceFolder}/bin/${fileBasenameNoExtension}"
         ],

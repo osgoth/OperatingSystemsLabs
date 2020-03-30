@@ -1,13 +1,14 @@
 #include "../header/misc.h"
 #include "../header/lab1.h"
 
-void waiting_time_sjf(int *bt, int *wt)
+int *waiting_time_sjf(int *bt, int *wt)
 {
     for (int i = 1; i < qua; i++)
         wt[i] = bt[i - 1] + wt[i - 1];
+    return wt;
 }
 
-void waiting_time_srtf(int *bt, int *wt, int *at)
+int *waiting_time_srtf(int *bt, int *wt, int *at)
 {
     int min, min_i = 0, done = 0, cur_t = 0, found = 0, fin_t = 0, tempt[qua];
 
@@ -41,9 +42,10 @@ void waiting_time_srtf(int *bt, int *wt, int *at)
         }
         cur_t++;
     }
+    return wt;
 }
 
-void waiting_time_rr(int *bt, int *wt, int *at)
+int *waiting_time_rr(int *bt, int *wt, int *at)
 {
     int tempt[qua], done = 0, cur_t = 0, min = __INT_MAX__;
     float quant;
@@ -78,6 +80,7 @@ void waiting_time_rr(int *bt, int *wt, int *at)
             }
         }
     }
+    return wt;
 }
 
 int avg_wait(int *wt)
@@ -89,33 +92,27 @@ int avg_wait(int *wt)
     return avg;
 }
 
-int print_avg(int *bt, int *wt, int *at, char *type)
+int get_avg(int *bt, int *wt, int *at, char *type)
 {
     int avg;
 
-    printf("№\tburst\twait\tarrival\n");
-    for (int i = 0; i < qua; i++)
-        printf("%d\t%d\t%d\t%d\n", i, bt[i], wt[i], at[i]);
-
     avg = avg_wait(wt);
-
-    printf("average waiting time for %s: %d\n\n", type, avg);
 
     return avg;
 }
 
-void waiting_time(int *bt, int *wt, int *at, char *type)
+int *waiting_time(int *bt, int *wt, int *at, char *type)
 {
     wt[0] = 0;
     if (strcmp(type, srtf) == 0)
-        waiting_time_srtf(bt, wt, at);
+        return waiting_time_srtf(bt, wt, at);
     else if (strcmp(type, rr) == 0)
-        waiting_time_rr(bt, wt, at);
+        return waiting_time_rr(bt, wt, at);
     else if (strcmp(type, sjf) == 0)
     {
         qsort(bt, qua, sizeof(int), compare_incr);
-        waiting_time_sjf(bt, wt);
+        return waiting_time_sjf(bt, wt);
     }
     else
-        waiting_time_sjf(bt, wt);
+        return waiting_time_sjf(bt, wt);
 }
