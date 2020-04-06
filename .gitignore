@@ -1,6 +1,2 @@
 **/.vscode
 **/bin
-bin/
-.vscode/
-bin/main
-.vscode/tasks.json
