@@ -1,5 +1,5 @@
-#include "../header/misc.h"
-#include "../header/lab1.h"
+#include "lab.h"
+#include "../../common/misc.h"
 
 int *waiting_time_sjf(int *bt, int *wt)
 {

@@ -6,36 +6,28 @@
 #include "../../common/misc.h"
 #include "lab.h"
 
-//compile and run: gcc main.c misc.c lab1.c -o main %% ./main
-
 int main()
 {
-    int bt[qua];                    //burst time array
-    int at[qua];                    //arrival time array
-    int wt[qua];                    //waiting time array
+    int seq[qua];                   // request sequence
     int avgs[t_qua] = {0, 0, 0, 0}; //average waiting time of all algorithms
-    char *types[] = {fcfs, sjf, srtf, rr};
+    char *types[] = {fcfs, sstf, scan, cscan};
+
     int min_i = 0;
-    int min_tot = 0;
     int sim_qua = 0;
+    int head = 100; //(rand() % 100) + (rand() % 100);
 
     printf("How many simulations would you like to go through?\n>>> ");
     scanf("%d", &sim_qua);
+    int bbs = abs(-20);
     for (int j = 0; j < sim_qua; j++)
     {
-        randomize_arr(bt, 25); //randomize burst time
-        randomize_arr(at, 25); //randomize arrival time
+        randomize_arr(seq, 199); // randomize request sequence time
 
         for (int i = 0; i < t_qua; i++)
         {
-            //create temp arrays
-            int tempbt[qua];
-            int tempat[qua];
-            //copy original values to temp array
-            copy(bt, tempbt);
-            copy(at, tempat);
-            waiting_time(bt, wt, at, types[i]);
-            avgs[i] += avg_wait(wt);
+            int tempseq[qua] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0}; // create temp arrays
+            copy(seq, tempseq);                                // copy original values to temp array
+            avgs[i] += schedule(tempseq, head, types[i]);
         }
     }
     for (int i = 0; i < t_qua; i++)
@@ -48,6 +40,5 @@ int main()
         printf("Average waiting time = %d: %s\n", avgs[i], types[i]);
 
     printf("Smallest = %d: %s\n", avgs[min_i], types[min_i]);
-
     return 0;
 }

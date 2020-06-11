@@ -1,3 +1,5 @@
+#define t_qua 4
+
 int *waiting_time_rr(int *bt, int *wt, int *at);
 int *waiting_time_srtf(int *bt, int *wt, int *at);
 int *waiting_time_sjf(int *bt, int *wt);
