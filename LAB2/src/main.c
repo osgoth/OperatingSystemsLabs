@@ -14,7 +14,7 @@ int main()
 
     int min_i = 0;
     int sim_qua = 0;
-    int head = 100; //(rand() % 100) + (rand() % 100);
+    int head = (rand() % 100) + (rand() % 100);
 
     printf("How many simulations would you like to go through?\n>>> ");
     scanf("%d", &sim_qua);
