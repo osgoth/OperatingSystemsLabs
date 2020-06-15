@@ -8,32 +8,25 @@
 
 int main()
 {
-    int bt[qua];                    //burst time array
-    int at[qua];                    //arrival time array
-    int wt[qua];                    //waiting time array
+    int seq[qua];                   // request sequence
     int avgs[t_qua] = {0, 0, 0, 0}; //average waiting time of all algorithms
-    char *types[] = {fcfs, sjf, srtf, rr};
+    char *types[] = {fifo, opt, lru, alru};
+
     int min_i = 0;
-    int min_tot = 0;
     int sim_qua = 0;
 
     printf("How many simulations would you like to go through?\n>>> ");
     scanf("%d", &sim_qua);
+    int bbs = abs(-20);
     for (int j = 0; j < sim_qua; j++)
     {
-        randomize_arr(bt, 25); //randomize burst time
-        randomize_arr(at, 25); //randomize arrival time
+        randomize_arr(seq, 10); // randomize request sequence time
 
         for (int i = 0; i < t_qua; i++)
         {
-            //create temp arrays
-            int tempbt[qua];
-            int tempat[qua];
-            //copy original values to temp array
-            copy(bt, tempbt);
-            copy(at, tempat);
-            waiting_time(bt, wt, at, types[i]);
-            avgs[i] += avg_wait(wt);
+            int tempseq[qua];   // create temp arrays
+            copy(seq, tempseq); // copy original values to temp array
+            avgs[i] += get_fault(tempseq, types[i]);
         }
     }
     for (int i = 0; i < t_qua; i++)
@@ -43,9 +36,9 @@ int main()
             min_i = i;
 
     for (int i = 0; i < t_qua; i++)
-        printf("Average waiting time = %d: %s\n", avgs[i], types[i]);
+        printf("Average faults quantity = %d: %s\n", avgs[i], types[i]);
 
     printf("Smallest = %d: %s\n", avgs[min_i], types[min_i]);
-
+    printf("Page slots = %d\n", PAGE_SLOT);
     return 0;
 }
